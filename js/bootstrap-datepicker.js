@@ -63,7 +63,7 @@
 				this.push.apply(this, new_array);
 			},
 			clear: function(){
-				this.length = 0;
+				this.splice(0);
 			},
 			copy: function(){
 				var a = new DateArray();
@@ -297,6 +297,7 @@
 			if (this.isInput){ // single input
 				this._events = [
 					[this.element, {
+						click: $.proxy(this.show, this),
 						focus: $.proxy(this.show, this),
 						keyup: $.proxy(function(e){
 							if ($.inArray(e.keyCode, [27,37,39,38,40,32,13,9]) === -1)
@@ -310,6 +311,7 @@
 				this._events = [
 					// For components that are not readonly, allow keyboard nav
 					[this.element.find('input'), {
+						click: $.proxy(this.show, this),
 						focus: $.proxy(this.show, this),
 						keyup: $.proxy(function(e){
 							if ($.inArray(e.keyCode, [27,37,39,38,40,32,13,9]) === -1)
@@ -514,9 +516,13 @@
 				format = this.o.format;
 
 			var lang = this.o.language;
-			return $.map(this.dates, function(d){
-				return DPGlobal.formatDate(d, format, lang);
-			}).join(this.o.multidateSeparator);
+			if (this.o.multidate === 1){
+				return DPGlobal.formatDate(this.viewDate, format, lang);
+			} else {
+				return $.map(this.dates, function(d){
+					return DPGlobal.formatDate(d, format, lang);
+				}).join(this.o.multidateSeparator);
+			}
 		},
 
 		setStartDate: function(startDate){
